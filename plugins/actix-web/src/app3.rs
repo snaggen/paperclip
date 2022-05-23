@@ -16,7 +16,7 @@ use super::{
     Mountable,
 };
 use actix_service1::ServiceFactory;
-#[cfg(any(feature = "swagger-ui", feature = "rapidoc"))]
+#[cfg(any(feature = "swagger-ui"))]
 use actix_web::web::HttpRequest;
 use actix_web::{
     dev::{HttpServiceFactory, MessageBody, ServiceRequest, ServiceResponse, Transform},
@@ -397,12 +397,11 @@ where
         self.inner = self.inner.take().map(|a| {
             a.app_data(actix_web::web::Data::new((tt, spec_path)))
                 .service(
-                    actix_web::web::resource(path)
-                        .route(actix_web::web::get().to(rapidoc_handler)),
-                        )
-                .service(
                     actix_web::web::resource(format!("{}/index.html", path))
                         .route(actix_web::web::get().to(rapidoc_handler)),
+                )
+                .service(
+                    actix_web::web::resource(path).route(actix_web::web::get().to(rapidoc_handler)),
                 )
         });
         self
